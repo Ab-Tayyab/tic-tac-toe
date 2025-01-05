@@ -8,6 +8,7 @@ let btn7 = document.getElementById("btn7");
 let btn8 = document.getElementById("btn8");
 let btn9 = document.getElementById("btn9");
 let reset = document.getElementById("reset");
+let displayResult = document.getElementById("result");
 
 let buttons = [btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
 let chance = "X";
@@ -46,49 +47,40 @@ reset.onclick = function () {
   buttons.forEach((btn) => {
     btn.innerText = " ";
     btn.disabled = false;
+    chance = "X";
+    displayResult.innerText = " ";
   });
 };
 
 let check_win = function () {
-  if (
-    (btn1.innerText == btn2.innerText &&
-      btn1.innerText == btn3.innerText &&
-      btn1.innerText != "") ||
-    (btn4.innerText == btn5.innerText &&
-      btn4.innerText == btn6.innerText &&
-      btn5.innerText != "") ||
-    (btn7.innerText == btn8.innerText &&
-      btn7.innerText == btn9.innerText &&
-      btn9.innerText != "") ||
-    (btn1.innerText == btn4.innerText &&
-      btn1.innerText == btn7.innerText &&
-      btn4.innerText != "") ||
-    (btn2.innerText == btn5.innerText &&
-      btn5.innerText == btn8.innerText &&
-      btn8.innerText != "") ||
-    (btn3.innerText == btn6.innerText &&
-      btn3.innerText == btn9.innerText &&
-      btn9.innerText != "") ||
-    (btn1.innerText == btn5.innerText &&
-      btn1.innerText == btn9.innerText &&
-      btn9.innerText != "") ||
-    (btn3.innerText == btn5.innerText &&
-      btn3.innerText == btn7.innerText &&
-      btn7.innerText != "")
-  ) {
-    setTimeout(() => {
-      alert("X");
+  const winCondition = [
+    [btn1, btn2, btn3],
+    [btn4, btn5, btn6],
+    [btn7, btn8, btn9],
+    [btn1, btn4, btn7],
+    [btn2, btn5, btn8],
+    [btn3, btn6, btn9],
+    [btn1, btn5, btn9],
+    [btn3, btn5, btn7],
+  ];
+  for (let condition of winCondition) {
+    const [a, b, c] = condition;
+    if (
+      (a.innerText == b.innerText) &
+      (a.innerText == c.innerText) &
+      (a.innerText != "")
+    ) {
+      displayResult.innerText = `Result: ${a.innerText} Won!`;
+      displayResult.style.color = "red";
       disableAllButtons();
       gameActive = false;
-    }, 0);
-    return;
+      return;
+    }
   }
 
   if (buttons.every((btn) => btn.innerText != "")) {
-    setTimeout(() => {
-      alert("It's a Draw!");
-      disableAllButtons();
-      gameActive = false;
-    }, 0);
+    displayResult.innerText = "Result: Draw!";
+    disableAllButtons();
+    gameActive = false;
   }
 };
