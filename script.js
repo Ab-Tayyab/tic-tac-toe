@@ -9,11 +9,39 @@ let btn8 = document.getElementById("btn8");
 let btn9 = document.getElementById("btn9");
 let reset = document.getElementById("reset");
 let displayResult = document.getElementById("result");
+let toss = document.getElementById("toss");
+let letters = document.querySelectorAll(".letter");
 
 let buttons = [btn1, btn2, btn3, btn4, btn5, btn6, btn7, btn8, btn9];
-let chance = "X";
-let gameActive = true;
+let chance = null;
+let gameActive = false;
+let tossDone = false;
 
+// Random player select Through Toss
+toss.onclick = function () {
+  // toss animation
+  letters.forEach((letter, index) => {
+    setTimeout(() => {
+      letter.style.animation = "spin 0.5s ease-in-out";
+      setTimeout(() => {
+        letter.style.animation = "";
+      }, 500);
+    }, index * 200);
+  });
+
+  // toss selection
+  const players = ["X", "O"];
+  if (!tossDone) {
+    const selected_player = players[Math.floor(Math.random() * players.length)];
+    chance = selected_player;
+    gameActive = true;
+    tossDone = true;
+    setTimeout(() => {
+      displayResult.innerText = `${chance} Won the toss and play first`;
+    }, letters.length * 210);
+    toss.disabled = true;
+  }
+};
 // for button disable
 let disableAllButtons = function () {
   buttons.forEach((btn) => {
@@ -24,7 +52,7 @@ let disableAllButtons = function () {
 // for change chance
 let change_chance = function () {
   if (chance == "X") {
-    chance = "0";
+    chance = "O";
   } else {
     chance = "X";
   }
@@ -33,7 +61,10 @@ let change_chance = function () {
 // fill text
 buttons.forEach((btn) => {
   btn.onclick = function () {
-    if (!gameActive || btn.innerText != "") return;
+    if (!tossDone) {
+      displayResult.innerText = "Pleae do the Toss first!";
+    }
+    if (!gameActive || !tossDone || btn.innerText != "") return;
     btn.innerText = chance;
     change_chance();
     check_win();
@@ -43,13 +74,14 @@ buttons.forEach((btn) => {
 // reset game
 
 reset.onclick = function () {
-  gameActive = true;
+  gameActive = false;
+  tossDone = false;
   buttons.forEach((btn) => {
     btn.innerText = " ";
     btn.disabled = false;
-    chance = "X";
-    displayResult.innerText = " ";
   });
+  toss.disabled = false;
+  displayResult.innerText = "Toss ...";
 };
 
 let check_win = function () {
@@ -71,7 +103,6 @@ let check_win = function () {
       (a.innerText != "")
     ) {
       displayResult.innerText = `Result: ${a.innerText} Won!`;
-      displayResult.style.color = "red";
       disableAllButtons();
       gameActive = false;
       return;
